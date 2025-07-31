@@ -1,16 +1,31 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const UserSchema = mongoose.Schema(
    {
     
 /// title is an example of a data field structure
-    password: {
+   
+    firstName: {
         type: String,
         require: true
     },
-  confirmPassword: {
+    lastName: {
         type: String,
         require: true
     },
+     email: {
+        type: String,
+        require: true
+    },
+     phoneNumber: {
+        type: String,
+        require: true
+    },
+     password: {
+        type: String,
+        require: true
+    },
+  
    },
 
 
@@ -18,5 +33,15 @@ const UserSchema = mongoose.Schema(
         timestamps: true
     }
 );
+UserSchema.pre("save", async function (next) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = mongoose.model("User", UserSchema)
