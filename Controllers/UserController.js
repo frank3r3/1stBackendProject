@@ -1,7 +1,8 @@
 const UserModel = require("../Models/UserModel");
+const bcrypt = require("bcryptjs");
 
 const RegisterUser = async (request,response) =>{
-    const { firstName,lastName,email,phoneNumber,password,  } =request.body
+    const {firstName,lastName,email,phoneNumber,password} =request.body
     try {
 
         // to check if task already exist in our database under task collection
@@ -31,6 +32,7 @@ const RegisterUser = async (request,response) =>{
         phoneNumber: UserResult.phoneNumber,
         password: UserResult.password
         
+        
     }); 
     } catch (error) {
        response.status(404).json({
@@ -38,6 +40,8 @@ const RegisterUser = async (request,response) =>{
        }); 
     }
 };
+
+
 
 const GetAllUser = async(request,response) =>{
     try {
@@ -49,4 +53,41 @@ const GetAllUser = async(request,response) =>{
        }); 
     }
 };
-module.exports = {RegisterUser,GetAllUser}
+
+
+
+const Login = async (request, response) => {
+  const {email,password } = request.body;
+  try {
+    const CheckUser = await UserModel.findOne({email});
+    if (!CheckUser) {
+      return response.status(404).json({ message: "User not found" });
+    }
+
+    const validatePassword = await bcrypt.compare(password, CheckUser.password);
+    // if (!validatePassword) {
+    //   return response.status(401).json({ message: "Invalid password" });
+    // }
+    if (validatePassword){
+        response.status(200).json({
+            message: "Login successful"
+        });
+
+    } else{
+       return response.status(401).json({ message: "Invalid password" });  
+    }
+
+    // Send user data (excluding password)
+    return response.status(200).json({
+      _id: CheckUser._id,
+      email: CheckUser.email,
+      // optionally: token or other data
+    });
+
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { RegisterUser, GetAllUser, Login };

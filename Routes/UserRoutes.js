@@ -1,5 +1,5 @@
 const express = require("express");
-const { RegisterUser, GetAllUser, } = require("../Controllers/Usercontroller");
+const { RegisterUser, GetAllUser, Login, } = require("../Controllers/Usercontroller");
 
 const router =  express.Router();
 
@@ -8,6 +8,8 @@ const router =  express.Router();
 
 router.post("/", RegisterUser );
 router.get("/", GetAllUser);
+router.post("/login", Login);
+
 
 // router.put("/",updateTask);
 

@@ -7,23 +7,23 @@ const UserSchema = mongoose.Schema(
    
     firstName: {
         type: String,
-        require: true
+        required: true
     },
     lastName: {
         type: String,
-        require: true
+        required: true
     },
      email: {
         type: String,
-        require: true
+        required: true
     },
      phoneNumber: {
         type: String,
-        require: true
+        required: true
     },
-     password: {
+password: {
         type: String,
-        require: true
+        required: true
     },
   
    },
@@ -33,15 +33,27 @@ const UserSchema = mongoose.Schema(
         timestamps: true
     }
 );
+// UserSchema.pre("save", async function (next) {
+//   try {
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(this.password, salt);
+//     this.password = hashedPassword;
+//     next();
+//   } catch (error) {
+//     next(error);
+// }
+// });
 UserSchema.pre("save", async function (next) {
   try {
+    if (!this.isModified("password")) return next();
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, salt);
     this.password = hashedPassword;
     next();
   } catch (error) {
     next(error);
-  }
+  }
 });
 
 module.exports = mongoose.model("User", UserSchema)
