@@ -1,5 +1,5 @@
 const express = require("express");
-const { GetAllTask, createTask, updateTask, deleteTask, GetSingleTask, updateSingleTask, DeleteSingleTask } = require("../Controllers/TaskController");
+const { GetAllTask, createTask, updateTask, deleteTask, GetSingleTask, updateSingleTask, DeleteSingleTask } = require("../controllers/TaskController");
 
 const router =  express.Router();
 router.get("/", GetAllTask);
